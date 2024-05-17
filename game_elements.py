@@ -24,14 +24,13 @@ class Room:
     def get_room_name(self):
         return self.name
     
-    
+# TODO: add monster movement
 class Monster:
     def __init__(self, name, description, position=None):
         self.name = name
         self.description = description
         self.position = None # some room
-    # monsters need to be able to move through the rooms and encounter the player
-    # some function to move the monster to a connected room
+
     def set_position(self, room):
         self.position = room
 
@@ -43,26 +42,29 @@ class Player:
     def __init__(self, name, description):
         self.name = name
         self.description = description
-        self.inventory = {}
-        self.position = None # current room player is in
+        self.position = None 
+        self.has_key = False
 
-    def set_position(self, room): # must pass in room object itself?
+    def set_position(self, room): # position is a room object
         self.position = room
 
-    def get_player_position(self):
+    def get_player_position(self): # returns the name of the room the player is in
         return self.position.get_room_name()
     
-    def add_to_inventory(self, item):
-        self.inventory[item.name] = item
+    def pick_up_key(self):
+        self.has_key = True
 
-    def get_inventory(self):
-        return self.inventory
+    def exit_check(self):
+        return self.has_key
+        
+
 
 class Key:
     def __init__(self, name, description):
         self.name = name
         self.description = description
         self.position = None
+        self.picked_up = False
 
     def set_position(self, room):
         self.position = room
@@ -70,7 +72,10 @@ class Key:
     def get_key_position(self):
         if self.position is not None:
             return self.position.get_room_name()
-    
+        
+    def pick_up(self):
+        self.picked_up = True
+        self.position = None
     
 # will track our current game state so we can save this state to a file and load it later
 class GameState:
