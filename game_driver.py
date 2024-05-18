@@ -1,6 +1,6 @@
 import random
 import pickle
-from gui_driver import start_page, ending_page, new_game, load_game, save_game  # change this later by listing specifically the functions, alter all the imports in all the flies
+from gui_driver import start_page, ending_page, new_game, load_game, save_game, monster_encounter # change this later by listing specifically the functions, alter all the imports in all the flies
 from game_elements import *
 
 # Initialize game "map" with rooms
@@ -49,33 +49,22 @@ if __name__ == "__main__":
         print(player.position.get_room_description())
 
         if player.get_player_position() == monster.get_monster_position():
-            print("You encounter a monster")
-            print(monster.description)
-            # player will now haRve options for interaction: player must choose correct way to avoid the monster
-            press = input("Press 'e' to escape or 's' to stay still")
-            if press == 'e':
-                # run to randomly connected room to escape
-                #escape_to = list(player.position.get_connected_rooms().keys())# list of keys
-                #player.set_position(player.position.connected_rooms[random.choice(escape_to)]) # use key to index room object
-                # TODO have player change rooms encountering a monster
-                print("You have escaped the monster")
+            monster_encounter(player, monster)
 
 
-            elif press == 's':
-                print("You have been eaten by the monster")
-                break
-        
-
-        if exit_key.get_key_position is not None and player.get_player_position() == exit_key.get_key_position():
+        if exit_key.get_key_position() is not None and player.get_player_position() == exit_key.get_key_position():
             print("You have found the key")
-            pick = input("press 'p' to pick up the key")
-            if pick == 'p':
-                print("You have picked up the key")
-                print("You can now unlock the exit")
-                player.pick_up_key()
-                exit_key.pick_up()
+            pick = input("press 'p' to pick up the key or 'e' to leave it")
+            pick = pick.lower()
+            while pick not in ['p', 'e']:
+                print("Invalid input. Please try again.")
+                pick = input("press 'p' to pick up the key or 'e' to leave it")
+            print("You have picked up the key")
+            print("You can now unlock the exit")
+            player.pick_up_key()
+            exit_key.pick_up()
+            print("The exit key is added to inventory")
 
-                print("The exit key is added to inventory")
 
         if player.get_player_position() == "Room 10":       
             if player.exit_check(): 
@@ -97,7 +86,7 @@ if __name__ == "__main__":
 
         player.set_position(player.position.connected_rooms[player_choice])
 
-            # player can encounter monster
-            # player can escape
-            # player can die
+                # player can encounter monster
+                # player can escape
+                # player can die
 ending_page(player)

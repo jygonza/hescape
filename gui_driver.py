@@ -66,6 +66,26 @@ def game_loop(player, monster, key):
     # game loop ends if player dies to monster or player escapes
     pass
 
+def monster_encounter(player, monster):
+    # if player encounters a monster, they are given a description of the monster and a chance to avoid it
+    print("You encounter a monster")
+    print(monster.description)
+    # player will now have options for interaction: player must choose correct way to avoid the monster
+    while True:
+        press = input("Press 'e' to escape or 's' to stay still: ")
+        if press == 'e':
+            # run to randomly connected room to escape
+            escape_to = list(player.position.get_connected_rooms().keys())  # list of keys
+            escape_room = random.choice(escape_to)
+            player.set_position(player.position.connected_rooms[escape_room])  # use key to index room object
+            print("You have escaped the monster")
+            break
+        elif press == 's':
+            print("You have been eaten by the monster")
+            break
+        else:
+            print("Invalid input. Please try again.")
+
 def ending_page(player):
     # Display end result depending on if player dies or escapes
     # if player is in the exit room with the key in their inventory, they win
