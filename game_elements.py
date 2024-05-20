@@ -2,12 +2,11 @@
 
 from typing import Any
 
-
 class Room:
     def __init__(self, name, description):
         self.name = name
         self.description = description
-        self.items = {} # not used right now
+        #self.items = {} # not used right now
         self.connected_rooms = {}
 
     # only connecting rooms when intializing all game elements
@@ -23,7 +22,10 @@ class Room:
     
     def get_room_name(self):
         return self.name
-    
+
+    def reset_room(self):
+        self.connected_rooms = {}
+        
 # TODO: add monster movement
 class Monster:
     def __init__(self, name, description, position=None):
@@ -43,20 +45,24 @@ class Player:
         self.name = name
         self.description = description
         self.position = None 
-        self.has_key = False
+        self.alive = True
+        self.escaped = False
+        #self.has_key = False
 
     def set_position(self, room): # position is a room object
         self.position = room
 
     def get_player_position(self): # returns the name of the room the player is in
         return self.position.get_room_name()
-    
-    def pick_up_key(self):
-        self.has_key = True
 
-    def exit_check(self):
-        return self.has_key
-        
+    def get_status(self):
+        return self.alive, self.escaped
+    
+    def player_hit(self):
+        self.alive = False
+
+    def player_escape(self):
+        self.escaped = True
 
 
 class Key:
@@ -77,6 +83,8 @@ class Key:
         self.picked_up = True
         self.position = None
     
+    def key_check(self):
+        return self.picked_up
 # will track our current game state so we can save this state to a file and load it later
 class GameState:
     def __init__(self, room_list, player_object, monster_object, key_object):
