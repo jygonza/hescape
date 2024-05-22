@@ -18,7 +18,7 @@ def start_page():
 # a new game needs to initialize the room connections, the player objects, the monster object, and the key object
 def new_game(room_list):
     print("new game starting...")
-    connect_rooms(room_list)
+    connect_rooms2(room_list)
     player = Player(input("Enter your name: "), "You are the player")
     player.set_position(room_list["Room 1"]) # player is placed in the starting room   
 
@@ -104,15 +104,13 @@ def ending_page(player):
     if choice == 'q':
         exit()
     
-# TODO find a different way for connecting rooms
+
 # takes in a dict of rooms and connects them randomly
 def connect_rooms(room_list):
     # randomly connect rooms, each room object has a connected_rooms attribute that is a dictionary using the room.name attribute as the keys
     for room in room_list.values():
-        # connect room to at least 1 room, room cannot be connected to itself
         available_rooms = [r for r in room_list.values() if r != room]
-        # connect room to a max of 3 other rooms that is not itself
-        for _ in range(1, 4):
+        for _ in range(3):
             if available_rooms:
                 connected_room = random.choice(available_rooms)
                 room.connect(connected_room)
@@ -120,9 +118,22 @@ def connect_rooms(room_list):
     return room_list
 
 def connect_rooms2(room_list):
-    decay_list = list(room_list.keys())
-    for room in room_list.values():
-        connected_rooms = random.sample(decay_list, random.randint(1, 4))
-        for connected_room in connected_rooms:
-            room.connect(room_list[connected_room])
+    # randomly connect rooms, each room object has a connected_rooms attribute that is a dictionary using the room.name attribute as the keys
+    decay_list = list(room_list.values())
+    for room in list(room_list.values()):
+        # connect room to at least 1 room, room cannot be connected to itself   
+        available_rooms = [r for r in decay_list if r != room and len(r.get_connected_rooms()) < 4]
+        # connect room to a max of 3 other rooms that is not itself
+   
+        for _ in range(3):
+            if available_rooms and len(room.get_connected_rooms()) < 4:
+                connected_room = random.choice(available_rooms)
+                room.connect(connected_room)
+                connected_room.connect(room)
+                if len(connected_room.get_connected_rooms()) >= 4 and connected_room in decay_list:
+                    decay_list.remove(connected_room)
+                if len(room.get_connected_rooms()) >= 4 and room in decay_list:
+                    decay_list.remove(room)
+    return room_list
+ 
 
