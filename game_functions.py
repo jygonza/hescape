@@ -1,7 +1,7 @@
 import random
 import pickle
 from game_elements import *
-from utils import input_validation
+from utils import input_validation, show_saved_games, update_player_list
 
 # create start page for the GUI
 def start_page():
@@ -19,7 +19,9 @@ def start_page():
 def new_game(room_list):
     print("new game starting...")
     connect_rooms2(room_list)
+    # TODO: player name must not be currently attached to an existing game
     player = Player(input("Enter your name: "), "You are the player")
+
     player.set_position(room_list["Room 1"]) # player is placed in the starting room   
 
     monster = Monster("Monster", "A scary monster") 
@@ -30,21 +32,30 @@ def new_game(room_list):
     print (key.get_key_position())
     return player, monster, key, room_list
 
-def save_game(room_list, player, monster, key):
-    # we will save the current game in the GameState object
-    print("saving game...")
-    game_object = GameState(room_list, player, monster, key)
-    # save the game object to a pickle file
-    with open("game_state.pkl", "wb") as f:
-        pickle.dump(game_object, f)
+def save_game(player, monster, key, room_list, player_id): # player_id will be player.name
+    if update_player_list(player_id):
+        # save game state
+        print("saving game...")
+
+        game_state = GameState(player, monster, key, room_list)
+        with open(f"game_save_{player_id}.pkl", "wb") as f:
+            pickle.dump(game_state, f)
+    else:
+        print("Could not save game, too many saved games")
 
 # TODO: add in check so we cannot load an unexisting game
-def load_game(saved_game_file):
-    # when player selects to load a game we will load the last saved game
+def load_game():
+    if not show_saved_games():
+        return False
+    
+    player_id = input("Enter the player name to load the game: ")
+    saved_game_file = f"game_save_{player_id}.pkl"
+
     print("loading game...")
     with open(saved_game_file, "rb") as f:
         game_object = pickle.load(f)
     return game_object.player, game_object.monster, game_object.key, game_object.rooms
+    
 
 # TODO: implement reset game function
 #def reset_game(room_list):
