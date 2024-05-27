@@ -1,7 +1,7 @@
 import random
 import pickle
 from game_elements import *
-from utils import input_validation
+from utils import input_validation, show_saved_games, update_player_list, player_name_check, open_file
 
 # create start page for the GUI
 def start_page():
@@ -19,7 +19,15 @@ def start_page():
 def new_game(room_list):
     print("new game starting...")
     connect_rooms2(room_list)
-    player = Player(input("Enter your name: "), "You are the player")
+    # TODO: player name must not be currently attached to an existing game
+    if open_file("player_list.json") is not None:
+        player_name = player_name_check(input("Enter your player name: "), open_file("player_list.json"))
+    else:
+        player_name = player_name_check(input("Enter your player name: "), [])
+
+    player = Player(player_name, "You are the player") # player object is created
+ 
+
     player.set_position(room_list["Room 1"]) # player is placed in the starting room   
 
     monster = Monster("Monster", "A scary monster") 
@@ -30,21 +38,34 @@ def new_game(room_list):
     print (key.get_key_position())
     return player, monster, key, room_list
 
-def save_game(room_list, player, monster, key):
-    # we will save the current game in the GameState object
-    print("saving game...")
-    game_object = GameState(room_list, player, monster, key)
-    # save the game object to a pickle file
-    with open("game_state.pkl", "wb") as f:
-        pickle.dump(game_object, f)
+def save_game(player, monster, key, room_list, player_id): # player_id will be player.name
+    if update_player_list(player_id):
+        # save game state
+        print("saving game...")
 
-# TODO: add in check so we cannot load an unexisting game
-def load_game(saved_game_file):
-    # when player selects to load a game we will load the last saved game
+        game_state = GameState(player, monster, key, room_list)
+        with open(f"game_save_{player_id}.pkl", "wb") as f:
+            pickle.dump(game_state, f)
+    else:
+        print("Could not save game, too many saved games")
+
+# TODO: improve load_game function so that if a player enters in a wrong name, they can try again, or choose a new game
+# if no saved games, return False, game_driver will instead call for new_game
+def load_game():
+    check, player_list = show_saved_games()
+    if check == False:
+        return False
+    player_id = input("Enter the player name to load the game: ")
+    if player_id not in player_list:
+        print("Player name not found")
+        return False
+    saved_game_file = f"game_save_{player_id}.pkl"
+
     print("loading game...")
     with open(saved_game_file, "rb") as f:
         game_object = pickle.load(f)
     return game_object.player, game_object.monster, game_object.key, game_object.rooms
+    
 
 # TODO: implement reset game function
 #def reset_game(room_list):

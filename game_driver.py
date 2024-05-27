@@ -25,12 +25,25 @@ if __name__ == "__main__":
     # initialize game elements based on selection before entering game loop, or exit
     options = {
         'n': lambda: new_game(ROOMS),
-        'l': lambda: load_game("game_state.pkl"),
+        'l': lambda: load_game() or new_game(ROOMS),
         'q': lambda: exit()
     }
 
     player, monster, exit_key, ROOMS = options.get(selection, lambda: None)()
-
+    # TODO: make function (class_check in utils.py) to check objects are initialized correctly
+    # debugging purposes only for now
+    if isinstance(player, Player):
+        print("player initialized")
+    else:
+        print("player not initialized")
+    if isinstance(monster, Monster):
+        print("monster initialized")
+    else:
+        print("monster not initialized")
+    if isinstance(exit_key, Key):  
+        print("key initialized")
+    else:   
+        print("key not initialized")
     #game loop
     while True:
         #
@@ -40,8 +53,10 @@ if __name__ == "__main__":
         # the player escapes when they reach the exit room with the key in their inventory
         #
         # TODO: update saving the game, must be able to save multiple different games
-        # TODO: update connect rooms function to get a valid map every time
-        # TODO: rooms will track objects in their inventories, objects will track if they have been picked up 
+            # TODO: add in check so player names must be unique from current saved games (in progress, check player_name_check function in utils.py)
+            # TODO: add in check so we cannot load an unexisting game (check load_game function in game_functions.py)l
+            # TODO: if a game is finished, the saved_game pickle file should be deleted
+                # and the player name should be removed from the player_list.json file
         # TODO: clean up code, add typing, add doctrings to all functions
         print(player.position.get_room_description())
 
@@ -61,7 +76,7 @@ if __name__ == "__main__":
             print("\t",room)
         player_choice = input("Enter the room you would like to move to or press 's' to save game: ")
         if player_choice == "s":
-            save_game(ROOMS, player, monster, exit_key)
+            save_game(player, monster, exit_key, ROOMS, player.get_player_name())
             print("Game saved")
             exit()
 

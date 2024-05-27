@@ -54,6 +54,9 @@ class Player:
 
     def get_player_position(self): # returns the name of the room the player is in
         return self.position.get_room_name()
+    
+    def get_player_name(self):
+        return self.name
 
     def get_status(self):
         return self.alive, self.escaped
@@ -87,7 +90,7 @@ class Key:
         return self.picked_up
 # will track our current game state so we can save this state to a file and load it later
 class GameState:
-    def __init__(self, room_list, player_object, monster_object, key_object):
+    def __init__(self, player_object, monster_object, key_object, room_list):
         # need to save, the room objects, player object, monster object, and key object, as well as the current 
         # state of their attributes
         self.rooms = room_list                   # save the list of room objects
