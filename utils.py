@@ -7,11 +7,31 @@ def input_validation(some_input, valid_selections):
         some_input = input("Invalid selection. Please try again:").lower()
     return some_input
 
-# TODO: still needs work 
+# TODO: still needs work on checking for same names but letters capitalized, although capitalizations count as different names,
+# we are unable to load a game with the same name but different capitalization
 def player_name_check(player_name, player_list):
-    while player_name.lower() in player_list:
-        player_name = input("Player name already exists, please enter a new name: ").lower()
+    # character limit on player name and no whitespace
+    while True:
+        if len(player_name) > 20 or " " in player_name:
+            print("Player name must be less than 20 characters and contain no whitespace")
+            player_name = input("Enter your player name: ")
+        elif player_name == "":
+            print("Player name cannot be empty")
+            player_name = input("Enter your player name: ")
+        elif player_name.lower() in player_list:
+            print("Player name already exists")
+            player_name = input("Enter your player name: ")
+        else:
+            break
+    
     return player_name
+
+def open_file(file_name):
+    try:
+        with open(file_name, "r") as f:
+            return f.read()
+    except FileNotFoundError:
+        return None
 
 def show_saved_games():
     try:
@@ -20,7 +40,7 @@ def show_saved_games():
         print("Saved games:")
         for i in range(0, len(player_list), 2):
             print(f"{player_list[i]:<20} {player_list[i+1] if i+1 < len(player_list) else ''}")
-        return True
+        return True, player_list
     except FileNotFoundError:
         print("No saved games found")
         return False

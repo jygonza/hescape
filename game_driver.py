@@ -53,8 +53,8 @@ if __name__ == "__main__":
         # the player escapes when they reach the exit room with the key in their inventory
         #
         # TODO: update saving the game, must be able to save multiple different games
-            # TODO: add in check so player names must be unique from current saved games
-            # TODO: add in check so we cannot load an unexisting game
+            # TODO: add in check so player names must be unique from current saved games (in progress, check player_name_check function in utils.py)
+            # TODO: add in check so we cannot load an unexisting game (check load_game function in game_functions.py)l
             # TODO: if a game is finished, the saved_game pickle file should be deleted
                 # and the player name should be removed from the player_list.json file
         # TODO: clean up code, add typing, add doctrings to all functions
