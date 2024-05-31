@@ -2,6 +2,15 @@ import json
 import os
 
 def input_validation(some_input, valid_selections):
+    """
+    Validates user input against a set of valid selections until a valid input is provided.
+
+    Args:some_input (str): The user input to validate.
+         valid_selections (list): A list of valid selections to compare the input against.
+
+    Returns:
+        str: The validated user input.
+    """
     valid_selections_set = set(valid_selections)
     while some_input.lower() not in valid_selections_set:
         some_input = input("Invalid selection. Please try again:").lower()
@@ -34,6 +43,14 @@ def open_file(file_name):
         return None
 
 def show_saved_games():
+    """
+    Summarizes saved games and displays them. If no saved games are found, an empty list is returned.
+
+    Returns:
+        tuple: A tuple containing a boolean indicating if saved games were found and a list of saved games.
+    Raises:
+        FileNotFoundError: If no saved games file is found.
+    """
     try:
         with open("player_list.json", "r") as f:
             player_list = json.load(f)
@@ -43,7 +60,8 @@ def show_saved_games():
         return True, player_list
     except FileNotFoundError:
         print("No saved games found")
-        return False
+        player_list = []
+        return False, player_list
 
 def update_player_list(player_id):
     """
@@ -71,7 +89,26 @@ def update_player_list(player_id):
            return True
     return False
 
-# TODO: needs to be implemented, ensures we are loading and saving game objects
-#       to the correct variables
-def class_check(player, monster, key):
-    pass
+
+
+def delete_saved_game(player_id):
+    """
+    Delete a saved game file and remove the player ID from the player list.
+
+    If the saved game file exists, it is deleted. If the player list file exists, the player ID is removed from the list. If the player list file does not exist, no action is taken.
+    Args:
+        player_id (str): The player ID to be removed from the player list.
+    """
+
+    saved_game_file = f"game_save_{player_id}.pkl"
+    if os.path.exists(saved_game_file):
+        os.remove(saved_game_file)
+
+    if os.path.exists("player_list.json"):
+        with open("player_list.json", "r+") as f:
+            player_list = json.load(f)
+            if player_id in player_list:
+                player_list.remove(player_id)
+                f.seek(0)
+                json.dump(player_list, f)
+                f.truncate()

@@ -1,7 +1,7 @@
 import random
 import pickle
 from game_elements import *
-from utils import input_validation, show_saved_games, update_player_list, player_name_check, open_file
+from utils import input_validation, show_saved_games, update_player_list, player_name_check, open_file, delete_saved_game
 
 # create start page for the GUI
 def start_page():
@@ -56,9 +56,11 @@ def load_game():
     if check == False:
         return False
     player_id = input("Enter the player name to load the game: ")
-    if player_id not in player_list:
+    while player_id not in player_list:
         print("Player name not found")
-        return False
+        player_id = input("Enter the player name to load the game or press 'n' for a new game:")
+        if player_id == 'n':
+            return False
     saved_game_file = f"game_save_{player_id}.pkl"
 
     print("loading game...")
@@ -121,6 +123,7 @@ def ending_page(player):
     elif player.get_status()[0] == False:
         print("You have been eaten by a monster, you lose!")
     print("Game over")
+    delete_saved_game(player.get_player_name())
     choice = input_validation(input("Press 'q' to quit the game"), ['q'])
     if choice == 'q':
         exit()
@@ -157,4 +160,24 @@ def connect_rooms2(room_list):
                     decay_list.remove(room)
     return room_list
  
+def class_check(player, monster, key):
+    """
+    Checks if instances of Player, Monster, and Key classes are initialized and prints corresponding messages.
+
+    Args:
+        player: An instance to check if it's of the Player class.
+        monster: An instance to check if it's of the Monster class.
+        key: An instance to check if it's of the Key class.
+
+    Returns:
+        tuple: A tuple containing the player, monster, and key instances.
+    """
+
+    try:
+        assert isinstance(player, Player)
+        assert isinstance(monster, Monster)
+        assert isinstance(key, Key)
+        return True
+    except AssertionError:
+        return False
 

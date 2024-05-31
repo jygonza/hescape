@@ -25,6 +25,7 @@ if __name__ == "__main__":
     # initialize game elements based on selection before entering game loop, or exit
     options = {
         'n': lambda: new_game(ROOMS),
+        # TODO: add in check so we cannot load an unexisting game (check load_game function in game_functions.py)
         'l': lambda: load_game() or new_game(ROOMS),
         'q': lambda: exit()
     }
@@ -32,18 +33,7 @@ if __name__ == "__main__":
     player, monster, exit_key, ROOMS = options.get(selection, lambda: None)()
     # TODO: make function (class_check in utils.py) to check objects are initialized correctly
     # debugging purposes only for now
-    if isinstance(player, Player):
-        print("player initialized")
-    else:
-        print("player not initialized")
-    if isinstance(monster, Monster):
-        print("monster initialized")
-    else:
-        print("monster not initialized")
-    if isinstance(exit_key, Key):  
-        print("key initialized")
-    else:   
-        print("key not initialized")
+  
     #game loop
     while True:
         #

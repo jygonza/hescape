@@ -101,3 +101,32 @@ class GameState:
     def save_game(self):
         # save the current game state to a file
         pass
+
+class StartPage:
+    def __init__(self):
+        self.selection = None
+        self.options = {
+            # 'n': lambda: new_game(ROOMS),
+            # 'l': lambda: load_game() or new_game(ROOMS),
+            # 'q': lambda: exit()
+        }
+    def start_text(self):
+        pass
+    def new_game(self, ROOMS):
+        pass
+    def load_game(self):
+        pass
+    def exit(self):
+        pass
+
+# TODO: overlaps with GameState? can we combine these two classes?
+class GameScreen:
+    def __init__(self, player, monster, exit_key, ROOMS):
+        self.player = player
+        self.monster = monster
+        self.exit_key = exit_key
+        self.ROOMS = ROOMS
+
+    def game_loop(self):
+        pass
+        # check for encounters, handle objects, move player, save game, exit game
