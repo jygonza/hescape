@@ -2,7 +2,7 @@ import random
 import pickle
 from game_functions import start_page, ending_page, new_game, load_game, save_game, monster_encounter, key_encounter, exit_check 
 from game_elements import *
-from utils import input_validation
+
 
 # Initialize empty room objects
 # need to initialize rooms with names and descriptions, these stay the same, but their connections can differ
@@ -25,7 +25,6 @@ if __name__ == "__main__":
     # initialize game elements based on selection before entering game loop, or exit
     options = {
         'n': lambda: new_game(ROOMS),
-        # TODO: add in check so we cannot load an unexisting game (check load_game function in game_functions.py)
         'l': lambda: load_game() or new_game(ROOMS),
         'q': lambda: exit()
     }
@@ -42,12 +41,8 @@ if __name__ == "__main__":
         # if the player moves into a room with a key, then they are first given a description of the key and a chance to pick it up
         # the player escapes when they reach the exit room with the key in their inventory
         #
-        # TODO: update saving the game, must be able to save multiple different games
-            # TODO: add in check so player names must be unique from current saved games (in progress, check player_name_check function in utils.py)
-            # TODO: add in check so we cannot load an unexisting game (check load_game function in game_functions.py)l
-            # TODO: if a game is finished, the saved_game pickle file should be deleted
-                # and the player name should be removed from the player_list.json file
         # TODO: clean up code, add typing, add doctrings to all functions
+
         print(player.position.get_room_description())
 
         if player.get_player_position() == monster.get_monster_position():
@@ -67,9 +62,9 @@ if __name__ == "__main__":
         player_choice = input("Enter the room you would like to move to or press 's' to save game: ")
         if player_choice == "s":
             save_game(player, monster, exit_key, ROOMS, player.get_player_name())
-            print("Game saved")
             exit()
 
+            
         player.set_position(player.position.connected_rooms[player_choice])
 
                 # player can encounter monster

@@ -1,7 +1,7 @@
 import random
 import pickle
 from game_elements import *
-from utils import input_validation, show_saved_games, update_player_list, player_name_check, open_file, delete_saved_game
+from utils import input_validation, show_saved_games, update_player_list, is_name_unique, player_name_check, open_file, delete_saved_game, is_new_game
 
 # create start page for the GUI
 def start_page():
@@ -20,14 +20,10 @@ def new_game(room_list):
     print("new game starting...")
     connect_rooms2(room_list)
     # TODO: player name must not be currently attached to an existing game
-    if open_file("player_list.json") is not None:
-        player_name = player_name_check(input("Enter your player name: "), open_file("player_list.json"))
-    else:
-        player_name = player_name_check(input("Enter your player name: "), [])
+    player_list = open_file("player_list.json") or []
+    player_name = player_name_check(input("Enter your player name: "), player_list)
 
     player = Player(player_name, "You are the player") # player object is created
- 
-
     player.set_position(room_list["Room 1"]) # player is placed in the starting room   
 
     monster = Monster("Monster", "A scary monster") 
@@ -35,25 +31,38 @@ def new_game(room_list):
     
     key = Key("Key", "A key to unlock the exit")
     key.set_position(random.choice(list(room_list.values())[1:])) # key is placed in a random room that is not the starting room
-    print (key.get_key_position())
+
     return player, monster, key, room_list
 
 def save_game(player, monster, key, room_list, player_id): # player_id will be player.name
-    if update_player_list(player_id):
-        # save game state
-        print("saving game...")
-
+    player_list = open_file("player_list.json") or []
+    if is_name_unique(player_id, player_list):
+        try:
+            if update_player_list(player_id):
+                print("saving player list...")
+                game_state = GameState(player, monster, key, room_list)
+                with open(f"game_save_{player_id}.pkl", "wb") as f:
+                    pickle.dump(game_state, f)
+                    print("Game saved")
+            else:
+                print("Could not save player list, too many saved games")
+        except Exception as e:
+            print(e)
+    elif not is_name_unique(player_id, open_file("player_list.json")):
         game_state = GameState(player, monster, key, room_list)
         with open(f"game_save_{player_id}.pkl", "wb") as f:
             pickle.dump(game_state, f)
+            print("Game saved")
     else:
-        print("Could not save game, too many saved games")
+        print("Could not save game")
+        return False
 
-# TODO: improve load_game function so that if a player enters in a wrong name, they can try again, or choose a new game
+
+# if a player enters in a wrong name, they can try again, or choose a new game
 # if no saved games, return False, game_driver will instead call for new_game
 def load_game():
     check, player_list = show_saved_games()
-    if check == False:
+    if not check:
         return False
     player_id = input("Enter the player name to load the game: ")
     while player_id not in player_list:

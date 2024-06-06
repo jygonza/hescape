@@ -121,12 +121,23 @@ class StartPage:
 
 # TODO: overlaps with GameState? can we combine these two classes?
 class GameScreen:
-    def __init__(self, player, monster, exit_key, ROOMS):
+    def __init__(self, player, monster, exit_key, rooms):
         self.player = player
         self.monster = monster
         self.exit_key = exit_key
-        self.ROOMS = ROOMS
+        self.rooms = rooms
 
-    def game_loop(self):
+    def display_player_position(self):
+        print(self.player.get_player_position())
+
+    def display_room_description(self):
+        print(self.player.position.get_room_description())
+
+    def display_connected_rooms(self):
+        for room in self.player.position.get_connected_rooms().keys():
+            print("\t",room)
+
+    def handle_encounter(self):
         pass
-        # check for encounters, handle objects, move player, save game, exit game
+
+    
