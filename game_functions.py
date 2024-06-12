@@ -17,6 +17,18 @@ def start_page():
 
 # a new game needs to initialize the room connections, the player objects, the monster object, and the key object
 def new_game(room_list):
+    """
+    Start a new game by initializing player, monster, key, and room placements.
+
+    Prints a message indicating the start of a new game, connects rooms, prompts the player to enter their name, creates player, monster, and key objects, places them in random rooms, and returns player, monster, key, and room_list.
+
+    Args:
+        room_list: A dictionary containing room objects for the game.
+
+    Returns:
+        Tuple containing player, monster, key, and room_list objects.
+    """
+
     print("new game starting...")
     connect_rooms2(room_list)
     # TODO: player name must not be currently attached to an existing game
@@ -100,7 +112,7 @@ def monster_encounter(player, monster):
         print("Frozen in fear, you are unable to make the right choice and the monster eats you")
         player.player_hit()
         return False
-    
+
 def key_encounter(player, key):
     # if player encounters a key, they are given a description of the key and a chance to pick it up
     print("You have found a key")
@@ -179,7 +191,7 @@ def class_check(player, monster, key):
         key: An instance to check if it's of the Key class.
 
     Returns:
-        tuple: A tuple containing the player, monster, and key instances.
+        bool: True if all instances are of the correct class, False otherwise.
     """
 
     try:
@@ -190,3 +202,30 @@ def class_check(player, monster, key):
     except AssertionError:
         return False
 
+def update_path(scent_path, room):
+    if room not in scent_path:
+        scent_path.append(room)
+        print(f"{room} added to path")
+
+def path_decay(scent_path, room_dict):
+    for room in scent_path:
+        room_dict[room].dissipate_scent()
+        if room_dict[room].get_scent() <= 0:
+            scent_path.remove(room)
+        
+
+# TODO: not working yet
+def monster_movement(monster,room_list):
+    # monster moves to a random connected room
+    max_scent = 0
+    # get connected rooms returns a dict or connected rooms
+    connections = room_list[monster.get_monster_position()].get_connected_rooms().values()
+    # not properly iterating through rooms here because get_monster_position() returns a string not the object
+    for room in connections:
+        if room.get_scent() > max_scent:
+            max_scent = room.get_scent()
+            next_room = room
+    if max_scent == 0:
+        next_room = random.choice(list(connections))
+    monster.set_position(next_room)
+    print(f"The monster has moved to {monster.get_monster_position()}")

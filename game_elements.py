@@ -6,8 +6,11 @@ class Room:
     def __init__(self, name, description):
         self.name = name
         self.description = description
+        # scent will be used to track the player's path through the game
+        self.scent = 0
         #self.items = {} # not used right now
         self.connected_rooms = {}
+
 
     # only connecting rooms when intializing all game elements
     def connect(self, room):
@@ -22,6 +25,13 @@ class Room:
     
     def get_room_name(self):
         return self.name
+    
+    # a scent will naturally decay over time
+    def dissipate_scent(self):
+        self.scent -= 1
+    
+    def get_scent(self):    
+        return self.scent
 
     def reset_room(self):
         self.connected_rooms = {}
@@ -33,7 +43,7 @@ class Monster:
         self.description = description
         self.position = None # some room
 
-    def set_position(self, room):
+    def set_position(self, room): # position is a room object
         self.position = room
 
     def get_monster_position(self):
@@ -66,6 +76,9 @@ class Player:
 
     def player_escape(self):
         self.escaped = True
+    
+    def drop_scent(self):
+        self.position.scent += 3
 
 
 class Key:

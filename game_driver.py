@@ -1,6 +1,6 @@
 import random
 import pickle
-from game_functions import start_page, ending_page, new_game, load_game, save_game, monster_encounter, key_encounter, exit_check 
+from game_functions import start_page, ending_page, new_game, load_game, save_game, monster_encounter, key_encounter, exit_check, class_check, path_decay, update_path, monster_movement
 from game_elements import *
 
 
@@ -19,6 +19,8 @@ ROOMS = {
     "Room 10": Room("Room 10", "You are in room 10, the exit is here but the door is locked, I need a key ..."),
 }
 
+SCENT_PATH = []
+
 if __name__ == "__main__":
     # player introduced to game, chooses a new game or loads a previous one
     selection = start_page()
@@ -30,8 +32,10 @@ if __name__ == "__main__":
     }
 
     player, monster, exit_key, ROOMS = options.get(selection, lambda: None)()
-    # TODO: make function (class_check in utils.py) to check objects are initialized correctly
-    # debugging purposes only for now
+    class_check(player, monster, exit_key)
+    
+    # TODO: add in monster movement
+    # TODO: input verification for player movement
   
     #game loop
     while True:
@@ -42,11 +46,16 @@ if __name__ == "__main__":
         # the player escapes when they reach the exit room with the key in their inventory
         #
         # TODO: clean up code, add typing, add doctrings to all functions
-
-        print(player.position.get_room_description())
+  
+        path_decay(SCENT_PATH, ROOMS)
+        player.drop_scent()
+        update_path(SCENT_PATH, player.get_player_position())
+        for room in SCENT_PATH:
+            print(f"{room} has a scent of: {ROOMS[room].get_scent()}")
 
         if player.get_player_position() == monster.get_monster_position():
-            monster_encounter(player, monster)
+            if monster_encounter(player, monster):
+                continue
             if player.get_status()[0] == False:
                 break
 
@@ -64,8 +73,11 @@ if __name__ == "__main__":
             save_game(player, monster, exit_key, ROOMS, player.get_player_name())
             exit()
 
-            
+        
         player.set_position(player.position.connected_rooms[player_choice])
+        monster_movement(monster, ROOMS)
+        
+
 
                 # player can encounter monster
                 # player can escape
