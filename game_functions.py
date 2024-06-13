@@ -205,16 +205,30 @@ def class_check(player, monster, key):
 def update_path(scent_path, room):
     if room not in scent_path:
         scent_path.append(room)
-        print(f"{room} added to path")
+        #print(f"{room} added to path")
 
 def path_decay(scent_path, room_dict):
+    """
+    Decay the scent path by dissipating scent in each room and removing rooms with zero or negative scent levels.
+
+    Args:
+        scent_path: List of rooms representing the scent path.
+        room_dict: Dictionary mapping room names to Room objects.
+
+    Returns:
+        None
+    """
+    rooms_to_remove = []
+
     for room in scent_path:
         room_dict[room].dissipate_scent()
         if room_dict[room].get_scent() <= 0:
-            scent_path.remove(room)
-        
+            rooms_to_remove.append(room)
+    for room in rooms_to_remove:
+        scent_path.remove(room)
 
-# TODO: not working yet
+
+# TODO: test more thoroughly
 def monster_movement(monster,room_list):
     # monster moves to a random connected room
     max_scent = 0
@@ -228,4 +242,4 @@ def monster_movement(monster,room_list):
     if max_scent == 0:
         next_room = random.choice(list(connections))
     monster.set_position(next_room)
-    print(f"The monster has moved to {monster.get_monster_position()}")
+    print(f"The monster has moved to {monster.get_monster_position()}")# only for debugging purposes

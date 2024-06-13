@@ -36,6 +36,7 @@ if __name__ == "__main__":
     
     # TODO: add in monster movement
     # TODO: input verification for player movement
+    # TODO: add in docstrings and typing
   
     #game loop
     while True:
@@ -45,13 +46,10 @@ if __name__ == "__main__":
         # if the player moves into a room with a key, then they are first given a description of the key and a chance to pick it up
         # the player escapes when they reach the exit room with the key in their inventory
         #
-        # TODO: clean up code, add typing, add doctrings to all functions
-  
+    
         path_decay(SCENT_PATH, ROOMS)
         player.drop_scent()
         update_path(SCENT_PATH, player.get_player_position())
-        for room in SCENT_PATH:
-            print(f"{room} has a scent of: {ROOMS[room].get_scent()}")
 
         if player.get_player_position() == monster.get_monster_position():
             if monster_encounter(player, monster):
