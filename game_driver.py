@@ -32,12 +32,10 @@ if __name__ == "__main__":
     }
 
     player, monster, exit_key, ROOMS = options.get(selection, lambda: None)()
-    class_check(player, monster, exit_key)
+    class_check(player, monster, exit_key) # checks if the objects were assigned to correct classes
     
-    # TODO: add in monster movement
-    # TODO: input verification for player movement
-    # TODO: add in docstrings and typing
-  
+    # TODO: movement input verification
+
     #game loop
     while True:
         #
@@ -49,35 +47,32 @@ if __name__ == "__main__":
     
         path_decay(SCENT_PATH, ROOMS)
         player.drop_scent()
-        update_path(SCENT_PATH, player.get_player_position())
+        update_path(SCENT_PATH, player.get_player_position()) # update scent path with player's current position
 
         if player.get_player_position() == monster.get_monster_position():
-            if monster_encounter(player, monster):
+            if monster_encounter(player, monster): # player can escape
                 continue
-            if player.get_status()[0] == False:
+            if player.get_status()[0] == False: # player died
                 break
 
-        if exit_key.get_key_position() is not None and player.get_player_position() == exit_key.get_key_position():
+        # if key is not picked up and player is in the same room as the key
+        if exit_key.get_key_position() is not None and player.get_player_position() == exit_key.get_key_position(): 
             key_encounter(player, exit_key)
 
+        # if player is in exit room and key is picked up
         if player.get_player_position() == "Room 10" and exit_check(player, exit_key):
             break # exit game loop
         
         print("Connected rooms:")
         for room in player.position.get_connected_rooms().keys():
             print("\t",room)
-        player_choice = input("Enter the room you would like to move to or press 's' to save game: ")
+
+        player_choice = input("Enter the room you would like to move to or press 's' to save game: ") # TODO: input verification                       
         if player_choice == "s":
             save_game(player, monster, exit_key, ROOMS, player.get_player_name())
             exit()
 
-        
         player.set_position(player.position.connected_rooms[player_choice])
         monster_movement(monster, ROOMS)
         
-
-
-                # player can encounter monster
-                # player can escape
-                # player can die
 ending_page(player)
