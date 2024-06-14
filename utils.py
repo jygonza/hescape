@@ -33,6 +33,17 @@ def is_name_unique(player_name, player_list):
 
 
 def player_name_check(player_name, player_list):
+    """
+    Validates the player name to ensure it meets specified criteria.
+
+    Args:
+        player_name (str): The player's chosen name.
+        player_list (list): List of existing player names.
+
+    Returns:
+        str: The validated player name.
+    """
+
     # character limit on player name and no whitespace
     while True:
         if len(player_name) > 20 or " " in player_name:
@@ -49,7 +60,7 @@ def player_name_check(player_name, player_list):
     
     return player_name
 
-def open_file(file_name):
+def open_file(file_name): 
     try:
         with open(file_name, "r") as f:
             return json.load(f)
@@ -62,6 +73,7 @@ def show_saved_games():
 
     Returns:
         tuple: A tuple containing a boolean indicating if saved games were found and a list of saved games.
+
     Raises:
         FileNotFoundError: If no saved games file is found.
     """
@@ -77,7 +89,7 @@ def show_saved_games():
         player_list = []
         return False, player_list
     
-def is_new_game(player_name, player_list):
+def is_new_game(player_name, player_list): # am I using this function?
     """
     Check if the player name is new or already exists in the player list.
 
@@ -94,8 +106,8 @@ def is_new_game(player_name, player_list):
 def update_player_list(player_id):
     """
     Update the player list with a new player ID if the list is not full.
-
     If the player list file exists and has fewer than 10 entries, the player ID is added to the list. If the list is full, no update is made. If the file does not exist, a new file is created with the player ID.
+    
     Args:
         player_id (str): The player ID to be added to the player list.
     Returns:
@@ -123,8 +135,8 @@ def update_player_list(player_id):
 def delete_saved_game(player_id):
     """
     Delete a saved game file and remove the player ID from the player list.
-
     If the saved game file exists, it is deleted. If the player list file exists, the player ID is removed from the list. If the player list file does not exist, no action is taken.
+    
     Args:
         player_id (str): The player ID to be removed from the player list.
     """
